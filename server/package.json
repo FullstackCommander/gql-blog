@@ -7,7 +7,6 @@
     "start": "tsx watch src/index.ts",
     "build": "tsc",
     "serve": "node dist/index.js"
-
   },
   "keywords": [],
   "author": "",
