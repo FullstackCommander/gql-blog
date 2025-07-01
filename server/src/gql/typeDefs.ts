@@ -24,6 +24,7 @@ export const typeDefs = gql`
     bio: String
     createdAt: String!
     posts: [Post]
+    password: String!
     token: String
   }
 

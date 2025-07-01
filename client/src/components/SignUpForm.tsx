@@ -1,23 +1,37 @@
-import React, { useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
-import uploadApi from "../api/axiosConfig"
+import React, { useState } from "react";
+import { gql, useMutation } from "@apollo/client";
+import uploadApi from "../api/axiosConfig";
 
 const SIGNUP_MUTATION = gql`
-  mutation RegisterUser($username: String, $email: String, $password: String, $avatarUrl: String) {
-  registerUser(username: $username, email: $email, password: $password, avatarUrl: $avatarUrl) {
-    id
-    username
-    email
-    avatarUrl
-  }
+  mutation RegisterUser(
+    $username: String!
+    $email: String!
+    $password: String!
+    $avatar: String
+    $bio: String!
+  ) {
+    registerUser(
+      username: $username
+      email: $email
+      password: $password
+      avatar: $avatar
+      bio: $bio
+    ) {
+      id
+      username
+      email
+      avatar
+      bio
+    }
   }
 `;
 
 export default function SignUpForm() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [bio, setBio] = useState("");
 
   const [registerUser, { loading, error, data }] = useMutation(SIGNUP_MUTATION);
 
@@ -27,21 +41,28 @@ export default function SignUpForm() {
     let avatarUrl = null;
 
     if (avatarFile) {
-    const formData = new FormData();
-    formData.append('avatar', avatarFile);
+      const formData = new FormData();
+      formData.append("avatar", avatarFile);
 
-    try {
-      const res = await uploadApi.post('/upload', formData);
-      // Entferne den redundanten Content-Type Header
-      avatarUrl = res.data.url;
-    } catch (uploadError) {
-      console.error('Error uploading avatar:', uploadError);
-      // Logge mehr Details
-      console.error('Upload error response:', uploadError.response?.data);
-      console.error('Upload error status:', uploadError.response?.status);
-      return;
+      try {
+        const res = await uploadApi.post("/upload/avatar", formData);
+        // Entferne den redundanten Content-Type Header
+        avatarUrl = res.data.url;
+      } catch (uploadError) {
+        console.error("Error uploading avatar:", uploadError);
+        // Logge mehr Details
+        if (
+          typeof uploadError === "object" &&
+          uploadError !== null &&
+          "response" in uploadError &&
+          typeof (uploadError as any).response === "object"
+        ) {
+          console.error("Upload error response:", (uploadError as any).response?.data);
+          console.error("Upload error status:", (uploadError as any).response?.status);
+        }
+        return;
+      }
     }
-  }
 
     try {
       await registerUser({
@@ -49,20 +70,21 @@ export default function SignUpForm() {
           username,
           email,
           password,
-          avatarUrl,
+          avatar: avatarUrl,
+          bio: bio || "No bio provided",
         },
       });
-      alert('User registered successfully!');
+      alert("User registered successfully!");
     } catch (registerError) {
-      console.error('Error registering user:', registerError);
-      alert('Registration failed. Please try again.');
+      console.error("Error registering user:", registerError);
+      alert("Registration failed. Please try again.");
     }
-    setUsername('');
-    setEmail('');
-    setPassword('');
+    setUsername("");
+    setEmail("");
+    setPassword("");
     setAvatarFile(null);
-  }
-
+    setBio("");
+  };
 
   return (
     <form onSubmit={handleSubmit} className="signup-form">
@@ -87,6 +109,12 @@ export default function SignUpForm() {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
+      <textarea
+        placeholder="Bio"
+        value={bio}
+        onChange={(e) => setBio(e.target.value)}
+        rows={3}
+      />
       <input
         type="file"
         accept="image/*"
@@ -97,10 +125,10 @@ export default function SignUpForm() {
         }}
       />
       <button type="submit" disabled={loading}>
-        {loading ? 'Registering...' : 'Register'}
+        {loading ? "Registering..." : "Register"}
       </button>
       {error && <p className="error">Error: {error.message}</p>}
       {data && <p className="success">User registered successfully!</p>}
     </form>
-  )
+  );
 }
