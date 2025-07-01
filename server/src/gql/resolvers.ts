@@ -3,7 +3,6 @@ import Post from "../models/Post";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import { log } from "console";
 
 dotenv.config();
 
