@@ -43,13 +43,17 @@ async function startApolloServer() {
   // Global CORS middleware
   app.use(cors(corsOptions));
 
+  // Body parser middleware for JSON and URL-encoded data
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
+
   // Upload Routes - Nach CORS, aber vor GraphQL
   app.use("/upload", uploadRoutes);
   
   // GraphQL Middleware setup
   app.use(
     "/graphql",
-    bodyParser.json(),
+    
     expressMiddleware(server, {
       context: async ({ req }) => {
         const token = req.headers.token as string;
@@ -63,9 +67,7 @@ async function startApolloServer() {
   await new Promise<void>((resolve) => {
     httpServer.listen({ port: PORT }, resolve);
   });
-
-  console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`);
-  console.log(`📁 Upload endpoints ready at http://localhost:${PORT}/upload`);
+  
 }
 
 startApolloServer().catch((error) => {
