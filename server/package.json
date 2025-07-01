@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsx watch src/index.ts",
-    "build": "tsc",
+    "start": "npm run start",
+    "build": "npm run build",
     "serve": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
