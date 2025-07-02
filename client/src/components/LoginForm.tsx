@@ -1,42 +1,42 @@
 import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
+import {useAuth} from "../context/AuthContext";
 
 const LOGIN_MUTATION = gql`
   mutation LoginUser($username: String!, $password: String!) {
     loginUser(username: $username, password: $password) {
       username
-      password
       token
-  }
+      id
+    }
   }
 `;
 
 export default function LoginForm() {
+  const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const [loginUser, { loading, error, data }] = useMutation(LOGIN_MUTATION);
+  const [loginUser, { loading, error }] = useMutation(LOGIN_MUTATION);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      await loginUser({
-        variables: { username, password },
-      });
-      alert("Login successful!");
-      //Set token in localStorage or context if needed
-      localStorage.setItem("token", data.loginUser.token);
-      console.log("User logged in:", data.loginUser.username);
-      // Optionally redirect or perform other actions after successful login
-    } catch (err) {
-      console.error("Login error:", err);
-      alert("Login failed. Please check your credentials.");
+  try {
+    const response = await loginUser({ variables: { username, password } });
+    const token = response.data.loginUser.token;
+    const usernameLoggedIn = response.data.loginUser.username;
+    const id = response.data.loginUser.id;
+
+    login(token, id, usernameLoggedIn); // speichern im Context + localStorage
+
+    alert("Login successful!");
+  } catch (err) {
+    alert("Login failed.");
     }
-
-    setUsername("");
-    setPassword("");
-  };
+  setUsername("");
+  setPassword("");
+};
 
   return (
     <form onSubmit={handleSubmit}>

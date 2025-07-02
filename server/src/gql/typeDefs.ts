@@ -37,6 +37,15 @@ export const typeDefs = gql`
     image: String
   }
 
+  type UserWithToken {
+    id: ID!
+    username: String!
+    email: String!
+    avatar: String
+    bio: String
+    token: String!
+  }
+
   type Mutation {
     registerUser(
       username: String!
@@ -56,7 +65,7 @@ export const typeDefs = gql`
 
     deleteUser(id: ID!): Boolean!
 
-    loginUser(username: String!, password: String!): User!
+    loginUser(username: String!, password: String!): UserWithToken!
 
     createPost(
       title: String!
