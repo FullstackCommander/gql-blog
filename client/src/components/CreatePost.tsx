@@ -81,7 +81,7 @@ export default function CreatePost() {
     }
 
     // Ensure user ID is passed correctly
-    const authorId = user;
+    const authorId = user?.id;
 
     try {
       await createPost({

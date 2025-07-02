@@ -35,7 +35,7 @@ const NavBar = () => {
       ))}
       {isLoggedIn && (
         <>
-          <span style={{ marginRight: "1rem" }}>Hi, {user}</span>
+          <span style={{ marginRight: "1rem" }}>Hi, {user?.username || "User"}</span>
           <button onClick={handleLogout}>Logout</button>
         </>
       )}

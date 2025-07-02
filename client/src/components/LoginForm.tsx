@@ -19,25 +19,30 @@ export default function LoginForm() {
 
   const [loginUser, { loading, error }] = useMutation(LOGIN_MUTATION);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
 
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
   try {
     const response = await loginUser({ variables: { username, password } });
-    const token = response.data.loginUser.token;
-    const usernameLoggedIn = response.data.loginUser.username;
-    const id = response.data.loginUser.id;
 
-    login(token, id, usernameLoggedIn); // speichern im Context + localStorage
+    const { token, id, username: uname, email, avatar, bio } = response.data.loginUser;
+
+    login({
+      token,
+      user: { id, username: uname, email, avatar, bio },
+    });
 
     alert("Login successful!");
   } catch (err) {
+    console.error("Login error:", err);
     alert("Login failed.");
-    }
+  }
+
   setUsername("");
   setPassword("");
-};
-
+  };
+  
   return (
     <form onSubmit={handleSubmit}>
       <h2>Login</h2>
