@@ -36,7 +36,7 @@ async function startApolloServer() {
 
   // CORS Configuration - WICHTIG: Vor allen anderen Routes!
   const corsOptions = {
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN || "https://gql-blog.vercel.app/",
     credentials: true,
   };
 
