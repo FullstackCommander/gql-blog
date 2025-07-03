@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import uploadApi from "../api/axiosConfig";
+import toast from "react-hot-toast";
 
 const SIGNUP_MUTATION = gql`
   mutation RegisterUser(
@@ -74,10 +75,10 @@ export default function SignUpForm() {
           bio: bio || "No bio provided",
         },
       });
-      alert("User registered successfully!");
+      toast.success("User registered successfully!");
     } catch (registerError) {
       console.error("Error registering user:", registerError);
-      alert("Registration failed. Please try again.");
+      toast.error("Registration failed. Please try again.");
     }
     setUsername("");
     setEmail("");
@@ -87,32 +88,37 @@ export default function SignUpForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="signup-form">
+    <div className="flex flex-col items-center p-4 space-y-2 w-full">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4">
       <input
         type="text"
         placeholder="Username"
         value={username}
-        onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => setUsername(e.target.value)}
+        className="input input-bordered w-full max-w-xs outline-none focus:outline-none"
         required
       />
       <input
         type="email"
         placeholder="Email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
+        className="input input-bordered w-full max-w-xs outline-none focus:outline-none"
         required
       />
       <input
         type="password"
         placeholder="Password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
+        className="input input-bordered w-full max-w-xs outline-none focus:outline-none"
         required
       />
       <textarea
         placeholder="Bio"
         value={bio}
-        onChange={(e) => setBio(e.target.value)}
+          onChange={(e) => setBio(e.target.value)}
+        className="textarea textarea-bordered w-full max-w-xs outline-none focus:outline-none"
         rows={3}
       />
       <input
@@ -122,13 +128,15 @@ export default function SignUpForm() {
           if (e.target.files && e.target.files[0]) {
             setAvatarFile(e.target.files[0]);
           }
-        }}
+          }}
+        className="file-input file-input-bordered w-full max-w-xs"
+        placeholder="Upload an avatar (optional)"
       />
-      <button type="submit" disabled={loading}>
+      <button type="submit" disabled={loading} className="btn btn-primary max-w-xs">
         {loading ? "Registering..." : "Register"}
       </button>
       {error && <p className="error">Error: {error.message}</p>}
       {data && <p className="success">User registered successfully!</p>}
-    </form>
+    </form></div>
   );
 }
